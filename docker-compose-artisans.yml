@@ -1,0 +1,47 @@
+#version: "3.9" --> This is no longer supported
+services:
+  postgres15_v1:
+    container_name: postgres15_v1
+    image: postgres:15-alpine
+    ports:
+      - "5542:5432"
+    environment:
+      POSTGRES_USER: harryjose
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: artisans
+    volumes:
+      - data-postgres-artisans:/var/lib/postgresql/data
+    networks:
+      - artisans
+
+  svc-artisans:
+    container_name: svc-artisans
+    image: harrycas/svc-artisans
+#    build:
+#      context: ./
+#      dockerfile: ./svc-artisans/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DB_HOST: postgres15_v1:5432
+      DB_DATABASE: artisans
+      DB_USERNAME: harryjose
+      DB_PASSWORD: secret
+      # When in a same virtual machine --> msvc-catalog. If different use the public IPv4 DNS from aws
+#      CATALOG_URL: msvc-catalog:8082/product
+      CATALOG_URL: ec2-3-83-100-194.compute-1.amazonaws.com:8082/product
+    networks:
+      - artisans
+    depends_on:
+      - postgres15_v1
+#      - msvc-catalog  #Consumes catalog API
+
+# Defining variables
+# With 'name' we can use reuse the volumes we had
+volumes:
+  data-postgres-artisans:
+    name: data-postgres-artisans
+
+networks:
+  artisans:

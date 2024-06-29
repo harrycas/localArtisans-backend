@@ -1,0 +1,85 @@
+#version: "3.9" --> This is no longer supported
+services:
+  postgres15:
+    container_name: postgres15
+    image: postgres:15-alpine
+    ports:
+      - "5532:5432"
+    environment:
+      POSTGRES_USER: harryjosecastrorodriguez
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: artisansCatalog
+    volumes:
+      - data-postgres-catalog:/var/lib/postgresql/data
+    networks:
+      - artisans
+
+  postgres15_v1:
+    container_name: postgres15_v1
+    image: postgres:15-alpine
+    ports:
+      - "5542:5432"
+    environment:
+      POSTGRES_USER: harryjose
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: artisans
+    volumes:
+      - data-postgres-artisans:/var/lib/postgresql/data
+    networks:
+      - artisans
+
+  msvc-catalog:
+    container_name: msvc-catalog
+    #image: catalogv1  --> 1) When we used the one we had locally
+    # 2) With this is going to build the image, as long as it is not build yet. Using Dockerfile
+#    build:
+#      context: ./
+#      dockerfile: ./msvc-catalog/Dockerfile
+    # 3) The following image is from DockerHub
+    image: harrycas/msvc-catalog
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      DB_HOST: postgres15:5432
+      DB_DATABASE: artisansCatalog
+      DB_USERNAME: harryjosecastrorodriguez
+      DB_PASSWORD: root
+      ARTISANS_URL: svc-artisans:8080
+    networks:
+      - artisans
+    depends_on:
+      - postgres15
+    # restart: always --> This is optional, could be convenient if we find errors in the log
+
+  svc-artisans:
+    container_name: svc-artisans
+    image: harrycas/svc-artisans
+#    build:
+#      context: ./
+#      dockerfile: ./svc-artisans/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DB_HOST: postgres15_v1:5432
+      DB_DATABASE: artisans
+      DB_USERNAME: harryjose
+      DB_PASSWORD: secret
+      CATALOG_URL: msvc-catalog:8082/product
+    networks:
+      - artisans
+    depends_on:
+      - postgres15_v1
+      - msvc-catalog  #Consumes catalog API
+
+# Defining variables
+# With 'name' we can reuse the volumes we had
+volumes:
+  data-postgres-catalog:
+    name: data-postgres-catalog
+  data-postgres-artisans:
+    name: data-postgres-artisans
+
+networks:
+  artisans:

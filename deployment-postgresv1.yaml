@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres15-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres15-v1
+  template:
+    metadata:
+      labels:
+        app: postgres15-v1
+    spec:
+      containers:
+        - image: postgres:15-alpine
+          name: postgres15-v1
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: harryjose
+            - name: POSTGRES_PASSWORD
+              value: secret
+            - name: POSTGRES_DB
+              value: artisans

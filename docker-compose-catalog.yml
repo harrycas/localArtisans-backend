@@ -1,0 +1,48 @@
+#version: "3.9" --> This is no longer supported
+services:
+  postgres15:
+    container_name: postgres15
+    image: postgres:15-alpine
+    ports:
+      - "5532:5432"
+    environment:
+      POSTGRES_USER: harryjosecastrorodriguez
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: artisansCatalog
+    volumes:
+      - data-postgres-catalog:/var/lib/postgresql/data
+    networks:
+      - artisans
+
+  msvc-catalog:
+    container_name: msvc-catalog
+    #image: catalogv1  --> 1) When we used the one we had locally
+    # 2) With this is going to build the image, as long as it is not build yet. Using Dockerfile
+#    build:
+#      context: ./
+#      dockerfile: ./msvc-catalog/Dockerfile
+    # 3) The following image is from DockerHub
+    image: harrycas/msvc-catalog
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      DB_HOST: postgres15:5432
+      DB_DATABASE: artisansCatalog
+      DB_USERNAME: harryjosecastrorodriguez
+      DB_PASSWORD: root
+      ARTISANS_URL: ec2-34-226-211-80.compute-1.amazonaws.com:8080
+    networks:
+      - artisans
+    depends_on:
+      - postgres15
+    # restart: always --> This is optional, could be convenient if we find errors in the log
+
+# Defining variables
+# With 'name' we can use reuse the volumes we had
+volumes:
+  data-postgres-catalog:
+    name: data-postgres-catalog
+
+networks:
+  artisans:

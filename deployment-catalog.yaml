@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: msvc-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: msvc-catalog
+  template:
+    metadata:
+      labels:
+        app: msvc-catalog
+    spec:
+      containers:
+      - image: harrycas/msvc-catalog-arm:latest
+        name: msvc-catalog-arm
+        ports:
+        - containerPort: 8082
+        resources: {}
+status: {}
