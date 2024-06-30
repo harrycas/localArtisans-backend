@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-artisans
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-artisans
+  template:
+    metadata:
+      labels:
+        app: svc-artisans
+    spec:
+      containers:
+        - image: harrycas/svc-artisans-arm:latest
+          name: svc-artisans-arm
+          ports:
+            - containerPort: 8080
+          resources: {}
+status: {}
