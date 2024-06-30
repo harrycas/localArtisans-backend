@@ -4,9 +4,9 @@ metadata:
   name: msvc-catalog
 spec:
   ports:
-    port: 8082
-    protocol: TCP
-    targetPort: 8082
+    - port: 8082
+      protocol: TCP
+      targetPort: 8082
   selector: # Is going to select all the pods with that tag
     app: msvc-catalog
   type: LoadBalancer

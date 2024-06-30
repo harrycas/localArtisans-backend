@@ -1,4 +1,3 @@
-#version: "3.9" --> This is no longer supported
 services:
   postgres15_v1:
     container_name: postgres15_v1
@@ -24,7 +23,7 @@ services:
       - "8080:8080"
     environment:
       PORT: 8080
-      DB_HOST: postgres15_v1:5432
+      DB_HOST: postgres15-v1:5432
       DB_DATABASE: artisans
       DB_USERNAME: harryjose
       DB_PASSWORD: secret

@@ -19,11 +19,20 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_USER
-              value: harryjose
+              valueFrom:
+                secretKeyRef:
+                  name: svc-artisans
+                  key: username
             - name: POSTGRES_PASSWORD
-              value: secret
+              valueFrom:
+                secretKeyRef:
+                  name: svc-artisans
+                  key: password
             - name: POSTGRES_DB
-              value: artisans  # v1 is for the svc-artisans
+              valueFrom:
+                configMapKeyRef:
+                  name: svc-artisans
+                  key: database
           volumeMounts:
             - name: data-postgres-v1
               mountPath: /var/lib/postgresql/data  # This has to be like that

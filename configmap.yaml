@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: msvc-catalog
+data:
+  port: "8082"
+  db_host: postgres15:5432
+  database: artisansCatalog
+#  username: harryjosecastrorodriguez  --> They are in secret.yaml
+#  password: root
+  artisans_url: svc-artisans:8080
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svc-artisans
+data:
+  port: "8080"
+  db_host: postgres15-v1:5432
+  database: artisans
+#  username: harryjose
+#  password: secret
+  catalog_url: msvc-catalog:8082/product

@@ -19,11 +19,20 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_USER
-              value: harryjosecastrorodriguez
+              valueFrom:
+                secretKeyRef:
+                  name: msvc-catalog
+                  key: username
             - name: POSTGRES_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: msvc-catalog
+                  key: password
             - name: POSTGRES_DB
-              value: artisansCatalog
+              valueFrom:
+                configMapKeyRef:
+                  name: msvc-catalog
+                  key: database
           volumeMounts:
             - name: data-postgres
               mountPath: /var/lib/postgresql/data  # This has to be like that

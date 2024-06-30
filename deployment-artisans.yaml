@@ -17,5 +17,34 @@ spec:
           name: svc-artisans-arm
           ports:
             - containerPort: 8080
-          resources: {}
-status: {}
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: svc-artisans
+                  key: port
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: svc-artisans
+                  key: db_host
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: svc-artisans
+                  key: database
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: svc-artisans
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: svc-artisans
+                  key: password
+            - name: CATALOG_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: svc-artisans
+                  key: catalog_url

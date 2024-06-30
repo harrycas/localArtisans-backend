@@ -17,5 +17,34 @@ spec:
         name: msvc-catalog-arm
         ports:
         - containerPort: 8082
-        resources: {}
-status: {}
+        env:
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: msvc-catalog
+                key: port
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: msvc-catalog
+                key: db_host
+          - name: DB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: msvc-catalog
+                key: database
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: msvc-catalog
+                key: username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: msvc-catalog
+                key: password
+          - name: ARTISANS_URL
+            valueFrom:
+              configMapKeyRef:
+                name: msvc-catalog
+                key: artisans_url
