@@ -23,4 +23,11 @@ spec:
             - name: POSTGRES_PASSWORD
               value: secret
             - name: POSTGRES_DB
-              value: artisans
+              value: artisans  # v1 is for the svc-artisans
+          volumeMounts:
+            - name: data-postgres-v1
+              mountPath: /var/lib/postgresql/data  # This has to be like that
+      volumes:
+        - name: data-postgres-v1
+          persistentVolumeClaim:
+            claimName: postgresv1-pvc

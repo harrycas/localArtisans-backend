@@ -24,3 +24,12 @@ spec:
               value: root
             - name: POSTGRES_DB
               value: artisansCatalog
+          volumeMounts:
+            - name: data-postgres
+              mountPath: /var/lib/postgresql/data  # This has to be like that
+      volumes:
+        - name: data-postgres
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+# We use the colons because we can have multiple instances in general

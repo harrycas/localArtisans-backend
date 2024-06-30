@@ -1,29 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  creationTimestamp: "2024-06-29T15:18:15Z"
   name: svc-artisans
-  namespace: default
-  resourceVersion: "3629"
-  uid: a0cdb9ad-43df-4ada-8e13-cd743d34a678
 spec:
-  allocateLoadBalancerNodePorts: true
-  clusterIP: 10.97.135.210
-  clusterIPs:
-  - 10.97.135.210
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
   ports:
-  - nodePort: 31094
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     app: svc-artisans
-  sessionAffinity: None
   type: LoadBalancer
-status:
-  loadBalancer: {}
+
