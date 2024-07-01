@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: msvc-catalog
+            uri: lb://msvc-catalog
+            predicates:
+              - Path=/api/catalog/**
+            filters:
+              - StripPrefix=2
+          - id: svc-artisans
+            uri: lb://svc-artisans
+            predicates:
+              - Path=/api/artisans/**
+            filters:
+              - StripPrefix=2
