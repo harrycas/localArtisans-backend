@@ -16,7 +16,7 @@ spec:
         - image: harrycas/svc-artisans-arm:latest
           name: svc-artisans-arm
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           env:
             - name: PORT
               valueFrom:

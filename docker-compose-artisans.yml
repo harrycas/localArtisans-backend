@@ -20,9 +20,9 @@ services:
 #      context: ./
 #      dockerfile: ./svc-artisans/Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
-      PORT: 8080
+      PORT: 8081
       DB_HOST: postgres15-v1:5432
       DB_DATABASE: artisans
       DB_USERNAME: harryjose

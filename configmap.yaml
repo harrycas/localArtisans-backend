@@ -8,14 +8,14 @@ data:
   database: artisansCatalog
 #  username: harryjosecastrorodriguez  --> They are in secret.yaml
 #  password: root
-  artisans_url: svc-artisans:8080
+  artisans_url: svc-artisans:8081
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: svc-artisans
 data:
-  port: "8080"
+  port: "8081"
   db_host: postgres15-v1:5432
   database: artisans
 #  username: harryjose

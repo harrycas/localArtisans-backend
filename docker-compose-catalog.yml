@@ -31,7 +31,7 @@ services:
       DB_DATABASE: artisansCatalog
       DB_USERNAME: harryjosecastrorodriguez
       DB_PASSWORD: root
-      ARTISANS_URL: ec2-34-226-211-80.compute-1.amazonaws.com:8080
+      ARTISANS_URL: ec2-34-226-211-80.compute-1.amazonaws.com:8081
     networks:
       - artisans
     depends_on:
