@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User,Long> {
 
     User findByEmail(String email);
 
     User findByEmailAndPassword(String email,String password);
 
-    @Query(value = "select o from Order o where o.user.userId = :userId")
-    List<Order> findAllUserOrders(int userId);
+    @Query(value = "select o from Order o where o.user.id = :userId")
+    List<Order> findAllUserOrders(Long userId);
 
-    @Query(value = "select r from Review r where r.user.userId = :userId")
-    List<Review> findAllUserReviews(int userId);
+    @Query(value = "select r from Review r where r.user.id = :userId")
+    List<Review> findAllUserReviews(Long userId);
 
 }

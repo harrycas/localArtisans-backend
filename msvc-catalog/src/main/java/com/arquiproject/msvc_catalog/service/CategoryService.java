@@ -26,12 +26,12 @@ public class CategoryService implements ICategoryService{
     }
 
     @Override
-    public List<Product> findAllProductsCategory(int categoryId) {
+    public List<Product> findAllProductsCategory(Long categoryId) {
         return categoryRepository.findAllProductCategory(categoryId);
     }
 
     @Override
-    public Category findById(int categoryId){
+    public Category findById(Long categoryId){
         return categoryRepository.findById(categoryId).orElse(null);
     }
 }

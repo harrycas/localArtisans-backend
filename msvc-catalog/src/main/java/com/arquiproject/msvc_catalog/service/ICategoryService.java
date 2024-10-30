@@ -9,9 +9,9 @@ public interface ICategoryService {
 
     Category createCategory(Category category);
 
-    List<Product> findAllProductsCategory(int categoryId);
+    List<Product> findAllProductsCategory(Long categoryId);
 
-    Category findById(int categoryId);
+    Category findById(Long categoryId);
 
     List<Category> findAll();
 

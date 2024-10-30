@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 @CrossOrigin("*")
 public class OrderController {
 
@@ -30,7 +30,7 @@ public class OrderController {
     }
 
     @GetMapping("/one/{orderId}")
-    public ResponseEntity<Order> findById(@PathVariable int orderId){
+    public ResponseEntity<Order> findById(@PathVariable Long orderId){
         Order order = orderService.findById(orderId);
         if(order != null) {
             return new ResponseEntity<>(order, HttpStatus.OK);

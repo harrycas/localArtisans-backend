@@ -1,11 +1,12 @@
 package com.arquiproject.svc_artisans.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,14 +18,13 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private int orderID;
+    private Long id;
 
     @Column(name = "order_date")
-    private Date orderDate;
+    private LocalDateTime orderDate;
 
     @Column(name = "delivery_date")
-    private Date deliveryDate;
+    private LocalDateTime deliveryDate;
 
     @Column(name = "delivery_address")
     private String deliveryAddress;
@@ -39,9 +39,14 @@ public class Order {
     private double deliveryPrice;
 
     private double total;
+    private double discount;  // in terms of %
 
-    @Column(name = "discount")
-    private double discount;
+    @Column(name = "is_cart")
+    private boolean isCart;     // Identify the order as temporal & not final
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<OrderProduct> orderProducts;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -49,5 +54,8 @@ public class Order {
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
+
+    @Enumerated(EnumType.STRING)  // Save the Enum as a String in the Database
+    private OrderStatus status = OrderStatus.REQUEST_RECEIVED;  // Initial state
 
 }

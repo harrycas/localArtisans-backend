@@ -1,51 +1,64 @@
 package com.arquiproject.msvc_catalog.controller;
 
 import com.arquiproject.msvc_catalog.model.Category;
+import com.arquiproject.msvc_catalog.model.DTOs.ProductInfo;
 import com.arquiproject.msvc_catalog.model.Product;
 import com.arquiproject.msvc_catalog.service.CategoryService;
 import com.arquiproject.msvc_catalog.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/v1/product")
 @CrossOrigin("*")
 public class ProductController {
 
-    // ATTRIBUTES
     private final ProductService productService;
     private final CategoryService categoryService;
 
-    // CONSTRUCTOR
     public ProductController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
         this.categoryService = categoryService;
     }
 
-    // METHODS
-    @GetMapping("/one/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable("id") int productId) {  //Paso por URL(IDs o datos pequeños y NO sensibles)
-        Product product = productService.getProductById(productId);
-        if (product != null) return new ResponseEntity<>(product, HttpStatus.OK);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable("id") Long productId) {
+        return productService.getProductById(productId)
+            .map(product -> new ResponseEntity<>(product, HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // Get DTO ProductInfo for svc-artisans
+    @GetMapping("/info/{id}")
+    public ProductInfo getProductInfoById(@PathVariable Long id) {
+        Product product = productService.getProductById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+        return convertToProductInfo(product);
     }
 
     @PostMapping("/create/{categoryId}/{userId}")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product, @PathVariable int categoryId, @PathVariable int userId) {
-        Category category = categoryService.findById(categoryId);
-        product.setCategory(category);
-        product.setUserId(userId);
-        product.setActive(true);
-        Product createdProduct = productService.createProduct(product);
-        if(createdProduct != null)  return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-        else return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<Product> createProduct(@RequestBody Product product, @PathVariable Long categoryId, @PathVariable Long userId) {
+        try {
+            Category category = categoryService.findById(categoryId);
+            if (category == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            product.setCategory(category);
+            product.setUserId(userId);
+            product.setActive(true);
+            Product createdProduct = productService.createProduct(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/update/{categoryId}")
-    public ResponseEntity<Product> updateProduct(@RequestBody Product productDetails, @PathVariable int categoryId) {
+    public ResponseEntity<Product> updateProduct(@RequestBody Product productDetails, @PathVariable Long categoryId) {
         Category category = categoryService.findById(categoryId);
         productDetails.setCategory(category);
         Product updatedProduct = productService.updateProduct(productDetails);
@@ -54,7 +67,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int productId) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -66,17 +79,33 @@ public class ProductController {
     }
 
     @GetMapping("/usersProduct/{userId}")
-    public ResponseEntity<List<Product>> findAllProductsByUserId(@PathVariable int userId) {
+    public ResponseEntity<List<Product>> findAllProductsByUserId(@PathVariable Long userId) {
         List<Product> products = productService.findAllProductsByUserId(userId);
         if (products != null) return new ResponseEntity<>(products, HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/update/userDelete/{userId}")
-    public ResponseEntity<Void> updateProductsToInactive(@PathVariable int userId) {
-        List<Product> products = productService.findAllProductsByUserId(userId);
-        productService.updateProductsToInactive(products);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PutMapping("/userDelete/{userId}")
+    public ResponseEntity<Void> updateProductsToInactive(@PathVariable Long userId) {
+        try {
+            productService.updateProductsToInactive(userId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Mapper to convert Product a ProductInfo
+    private ProductInfo convertToProductInfo(Product product) {
+        ProductInfo productInfo = new ProductInfo();
+        productInfo.setProductId(product.getId());
+        productInfo.setName(product.getName());
+        productInfo.setDescription(product.getDescription());
+        productInfo.setPrice(product.getPrice());
+        productInfo.setActive(product.isActive());
+        productInfo.setUserId(product.getUserId());
+        productInfo.setCategoryId(product.getCategory() != null ? product.getCategory().getId() : null);
+        return productInfo;
     }
 
 }

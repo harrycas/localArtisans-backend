@@ -1,6 +1,9 @@
 package com.arquiproject.svc_artisans.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
@@ -14,28 +17,34 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private int userId;
+    private Long id;
 
     @Column(name = "full_name")
     private String fullName;
 
+    @Column(unique = true)
     private String dni;
 
+    @Email
+    @NotBlank
     @Column(unique = true)
     private String email;
 
+    @NotBlank
+    @Size(min = 8)
+    private String password;
+
     private String phone;
 
-    // Not actually a code, should be a certificate (sth like that)
+    // To validate an Artisan
     private String artisanCode;
 
+    // To identify user as Admin, Artisan or Client
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_type")
-    private String userType;
+    private UserType userType;
 
     @Column(name = "profile_image")
     private String profileImage;
-
-    private String password;
 
 }

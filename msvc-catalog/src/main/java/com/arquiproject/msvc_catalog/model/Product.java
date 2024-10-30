@@ -6,27 +6,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "products")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Table(name = "products")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private int productId;
-
+    private Long id;
     private String name;
     private String description;
-    private String image;
     private double price;
     private boolean active;
 
-    //Like a Foreign Key of User
+    // Like a Foreign Key of User(From svc-artisans). Pass through the session ID
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

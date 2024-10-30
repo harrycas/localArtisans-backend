@@ -6,23 +6,25 @@ import com.arquiproject.svc_artisans.model.Review;
 import com.arquiproject.svc_artisans.views.LoginRequest;
 import com.arquiproject.svc_artisans.views.LoginResponse;
 import com.arquiproject.svc_artisans.service.UserService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
 @CrossOrigin("*")
 public class UserController {
 
     // Attributes
-
     private final UserService userService;
 
     // Constructor
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -36,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/one/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable("userId") int userId) {
+    public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId) {
         User user = userService.getUserById(userId);
         if (user != null) return new ResponseEntity<>(user, HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -64,7 +66,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("userId") int userId) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -79,14 +81,40 @@ public class UserController {
         }
     }
 
+    @PostMapping("/{userId}/profile-image")
+    public ResponseEntity<String> uploadProfileImage(@PathVariable Long userId, @RequestParam("file") MultipartFile file) {
+        try {
+            userService.uploadProfileImage(userId, file);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Profile image uploaded successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading profile image");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{userId}/profile-image")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable Long userId) {
+        try {
+            byte[] image = userService.getProfileImage(userId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG); // Change the image to a PNG file
+            return new ResponseEntity<>(image, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     @GetMapping("/allOrder/{userId}")
-    public ResponseEntity<List<Order>> getOrdersById(@PathVariable int userId){
+    public ResponseEntity<List<Order>> getOrdersById(@PathVariable Long userId){
         List<Order> orders = userService.getAllUserOrders(userId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/allReview/{userId}")
-    public ResponseEntity<List<Review>> getReviewsById(@PathVariable int userId){
+    public ResponseEntity<List<Review>> getReviewsById(@PathVariable Long userId){
         List<Review> reviews = userService.getAllUserReviews(userId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }

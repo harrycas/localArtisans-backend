@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/api/v1/category")
 @CrossOrigin("*")
 public class CategoryController {
 
@@ -37,7 +37,7 @@ public class CategoryController {
     }
 
     @GetMapping("/listProducts/{categoryId}")
-    public ResponseEntity<List<Product>>findAllProductsCategory (@PathVariable int categoryId){
+    public ResponseEntity<List<Product>>findAllProductsCategory (@PathVariable Long categoryId){
         List<Product> products = categoryService.findAllProductsCategory(categoryId);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }

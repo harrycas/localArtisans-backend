@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("/api/v1/review")
 @CrossOrigin("*")
 public class ReviewController {
 
@@ -28,7 +28,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/delete/{reviewId}")
-    public ResponseEntity<Void> deleteById(@PathVariable int reviewId){
+    public ResponseEntity<Void> deleteById(@PathVariable Long reviewId){
         reviewService.deleteReview(reviewId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

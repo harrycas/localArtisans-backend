@@ -14,12 +14,12 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id")
-    private int paymentID;
+    private Long id;
+    @Column(name="user_email")
+    private String userEmail;
+    private double amount;
 
-    private double total;
-
-    @Column(name = "card_holder")
+    /*@Column(name = "card_holder")
     private String cardHolder;
 
     @Column(name = "card_number")
@@ -30,7 +30,7 @@ public class Payment {
     @Column(name = "billing_address")
     private String billingAddress;
 
-    private String type;
+    private String type;*/
 
     @OneToOne
     @JoinColumn(name = "order_id")

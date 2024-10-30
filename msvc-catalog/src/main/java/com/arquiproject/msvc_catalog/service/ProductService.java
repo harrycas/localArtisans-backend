@@ -2,8 +2,10 @@ package com.arquiproject.msvc_catalog.service;
 
 import com.arquiproject.msvc_catalog.model.Product;
 import com.arquiproject.msvc_catalog.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService implements IProductService{
@@ -15,9 +17,7 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public Product getProductById(int id) {
-        return productRepository.findById(id).orElse(null);
-    }
+    public Optional<Product> getProductById(Long id) {return productRepository.findById(id);}
 
     @Override
     public Product createProduct(Product product) {
@@ -26,19 +26,19 @@ public class ProductService implements IProductService{
 
     @Override
     public Product updateProduct(Product product) {
-        Product productFound = productRepository.findById(product.getProductId()).orElse(null);
+        Product productFound = productRepository.findById(product.getId()).orElse(null);
         if (productFound != null) return productRepository.save(product);
         else return null;
     }
 
     @Override
-    public boolean deleteProduct(int id) {
+    public boolean deleteProduct(Long id) {
         boolean deleted = false;
         try {
             productRepository.deleteById(id);
             deleted = true;
         } catch (Exception e) {
-            System.out.println("Error al eliminar el producto: " + id + ": " + e.getMessage());
+            System.out.println("Error when deleting product: " + id + ": " + e.getMessage());
         }
         return deleted;
     }
@@ -47,17 +47,24 @@ public class ProductService implements IProductService{
     public List<Product> findAllProduct() {return productRepository.findAll();}
 
     @Override
-    public List<Product> findAllProductsByUserId(int userId){
-        List<Product> products = productRepository.findProductsByUserId(userId);
-        return products;
+    public List<Product> findAllProductsByUserId(Long userId){
+      return productRepository.findByUserId(userId);
     }
 
+    @Transactional
     @Override
-    public void updateProductsToInactive(List<Product> products) {
-        for (Product product : products) {
-            product.setActive(false);
+    public void updateProductsToInactive(Long userId) {
+        try {
+            int updatedCount = productRepository.markProductsAsInactiveByUserId(userId);
+            if (updatedCount > 0) {
+                System.out.println(updatedCount + " products set inactive for user " + userId);
+            } else {
+                System.out.println("No products to change state for user " + userId);
+            }
+        } catch (Exception e) {
+            System.err.println("Error when updating products state: " + e.getMessage());
+            throw new RuntimeException("Can not update products state", e);
         }
-        productRepository.saveAll(products);
     }
 
 }

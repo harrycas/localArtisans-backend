@@ -19,7 +19,7 @@ public class ReviewService implements IReviewService{
     }
 
     @Override
-    public boolean deleteReview(int reviewId) {
+    public boolean deleteReview(Long reviewId) {
         boolean deleted = false;
         try{
             reviewRepository.deleteById(reviewId);
@@ -32,7 +32,7 @@ public class ReviewService implements IReviewService{
 
     @Override
     public Review updateReview(Review review) {
-        Review foundReview = reviewRepository.findById(review.getReviewId()).orElse(null);
+        Review foundReview = reviewRepository.findById(review.getId()).orElse(null);
         if(foundReview != null){
             return reviewRepository.save(review);
         } else {

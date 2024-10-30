@@ -1,5 +1,6 @@
 package com.arquiproject.svc_artisans.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,14 +15,17 @@ public class OrderProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    //Another Microservice
+    // Catalog Microservice
     @Column(name = "product_id", unique = true)
-    private int productId;
+    private Long productId;
+
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonBackReference
     private Order order;
 
 }
