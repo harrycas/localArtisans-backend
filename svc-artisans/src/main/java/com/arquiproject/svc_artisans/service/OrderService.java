@@ -3,7 +3,6 @@ package com.arquiproject.svc_artisans.service;
 import com.arquiproject.svc_artisans.client.CatalogClientRest;
 import com.arquiproject.svc_artisans.model.DTOs.ProductInfo;
 import com.arquiproject.svc_artisans.model.Order;
-import com.arquiproject.svc_artisans.repository.OrderProductRepository;
 import com.arquiproject.svc_artisans.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 

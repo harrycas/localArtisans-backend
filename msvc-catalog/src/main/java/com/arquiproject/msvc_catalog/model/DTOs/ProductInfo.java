@@ -11,4 +11,5 @@ public class ProductInfo {
   private boolean active;
   private Long userId;
   private Long categoryId;
+  private String primaryImageUrl;
 }

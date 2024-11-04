@@ -1,4 +1,4 @@
-package com.arquiproject.svc_artisans.model;
+package com.arquiproject.svc_artisans.model.enums;
 
 public enum OrderStatus {
   REQUEST_RECEIVED, // Solicitud recibida

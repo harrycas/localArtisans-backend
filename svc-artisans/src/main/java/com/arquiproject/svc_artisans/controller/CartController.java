@@ -1,5 +1,6 @@
 package com.arquiproject.svc_artisans.controller;
 
+import com.arquiproject.svc_artisans.model.DTOs.ProductInfo;
 import com.arquiproject.svc_artisans.service.CartService;
 import com.arquiproject.svc_artisans.service.OrderService;
 import com.arquiproject.svc_artisans.model.Order;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/cart")
+@CrossOrigin("*")
 public class CartController {
 
   private final CartService cartService;
@@ -57,6 +59,12 @@ public class CartController {
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
+  }
+
+  @GetMapping("/info/{productId}")
+  public ResponseEntity<ProductInfo> getProductDetails(@PathVariable Long productId) {
+    ProductInfo productInfo = cartService.getProductDetails(productId);
+    return ResponseEntity.ok(productInfo);
   }
 
 }

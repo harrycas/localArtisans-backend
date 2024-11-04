@@ -1,5 +1,7 @@
 package com.arquiproject.svc_artisans.service;
 
+import com.arquiproject.svc_artisans.client.CatalogClientRest;
+import com.arquiproject.svc_artisans.model.DTOs.ProductInfo;
 import com.arquiproject.svc_artisans.model.Order;
 import com.arquiproject.svc_artisans.model.User;
 import com.arquiproject.svc_artisans.model.OrderProduct;
@@ -16,11 +18,13 @@ public class CartService {
   final private OrderRepository orderRepository;
   final private OrderProductRepository orderProductRepository;
   final private UserRepository userRepository;
+  final private CatalogClientRest clientRest;
 
-  public CartService(OrderRepository orderRepository, OrderProductRepository orderProductRepository, UserRepository userRepository) {
+  public CartService(OrderRepository orderRepository, OrderProductRepository orderProductRepository, UserRepository userRepository, CatalogClientRest clientRest) {
     this.orderRepository = orderRepository;
     this.orderProductRepository = orderProductRepository;
     this.userRepository = userRepository;
+    this.clientRest = clientRest;
   }
 
   public Order getOrCreateCartByUser(Long userId) {
@@ -38,10 +42,6 @@ public class CartService {
   }
 
   public void addProductToCart(Long userId, Long productId, int quantity) {
-
-    /*if (quantity <= 0) {
-      throw new IllegalArgumentException("Quantity must be positive");
-    }*/
 
     // Retrieve or create the Shopping Cart
     Order cart = getOrCreateCartByUser(userId);
@@ -92,5 +92,8 @@ public class CartService {
     }
   }
 
+  public ProductInfo getProductDetails(Long productId) {
+    return clientRest.getProductById(productId);
+  }
 
 }

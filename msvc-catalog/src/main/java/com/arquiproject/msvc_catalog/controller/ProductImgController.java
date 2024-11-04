@@ -66,4 +66,12 @@ public class ProductImgController {
     return new ResponseEntity<>(productImgs, HttpStatus.OK);
   }
 
+  @PatchMapping("/{productId}/images/{imageId}/set-primary")
+  public ResponseEntity<String> setPrimaryImage(
+      @PathVariable Long productId,
+      @PathVariable Long imageId) {
+    productImgService.setPrimaryImage(productId, imageId);
+    return ResponseEntity.ok("Image set as primary successfully");
+  }
+
 }

@@ -1,6 +1,7 @@
 package com.arquiproject.msvc_catalog.controller;
 
 import com.arquiproject.msvc_catalog.model.Category;
+import com.arquiproject.msvc_catalog.model.ProductImg;
 import com.arquiproject.msvc_catalog.model.DTOs.ProductInfo;
 import com.arquiproject.msvc_catalog.model.Product;
 import com.arquiproject.msvc_catalog.service.CategoryService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -105,6 +107,16 @@ public class ProductController {
         productInfo.setActive(product.isActive());
         productInfo.setUserId(product.getUserId());
         productInfo.setCategoryId(product.getCategory() != null ? product.getCategory().getId() : null);
+        // Getting the principal image of the product
+        product.getImages().stream()
+            .filter(ProductImg::isPrimary)
+            .findFirst()
+            .ifPresent(img -> {
+                // Extract only the fileName from the url
+                String fileName = Paths.get(img.getUrl()).getFileName().toString();
+                productInfo.setPrimaryImageUrl(fileName);
+            });
+
         return productInfo;
     }
 

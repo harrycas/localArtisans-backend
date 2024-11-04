@@ -1,12 +1,11 @@
 package com.arquiproject.svc_artisans.model;
 
+import com.arquiproject.svc_artisans.model.enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.List;
 
 @Entity
 @AllArgsConstructor

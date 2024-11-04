@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 @RequestMapping("/api/v1/payment")
 @CrossOrigin("*")
 public class PaymentController {
-  private PaymentService paymentService;
+  private final PaymentService paymentService;
 
   public PaymentController(PaymentService paymentService) {
     this.paymentService = paymentService;
@@ -27,7 +27,7 @@ public class PaymentController {
     return new ResponseEntity<>(paymentStr, HttpStatus.OK);
   }
 
-  @PutMapping("/payment-complete")
+  /*@PutMapping("/payment-complete")
   public ResponseEntity<String> stripePaymentComplete(@RequestHeader(value="Authorization") String token)
       throws Exception {
     String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
@@ -35,5 +35,5 @@ public class PaymentController {
       throw new Exception("User email is missing");
     }
     return paymentService.stripePayment(userEmail);
-  }
+  }*/
 }

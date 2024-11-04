@@ -1,5 +1,6 @@
 package com.arquiproject.svc_artisans.model;
 
+import com.arquiproject.svc_artisans.model.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

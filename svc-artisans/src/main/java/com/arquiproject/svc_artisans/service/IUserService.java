@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
-    User getUserById(Long id);
-    User findByEmail(String email);
+    Optional<User> getUserByEmail(String email);
     User createUser(User user);
     User updateUser(User user);
     boolean deleteUser(Long id);
-    LoginResponse findByMailAndPassword(LoginRequest loginRequest);
+    LoginResponse login(LoginRequest loginRequest);
     void uploadProfileImage(Long userId, MultipartFile file) throws IOException;
     byte[] getProfileImage(Long userId) throws IOException;
     List<User> getAllUsers();

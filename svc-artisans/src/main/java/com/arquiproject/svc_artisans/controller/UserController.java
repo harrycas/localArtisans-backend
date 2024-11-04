@@ -39,16 +39,16 @@ public class UserController {
 
     @GetMapping("/one/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId) {
-        User user = userService.getUserById(userId);
-        if (user != null) return new ResponseEntity<>(user, HttpStatus.OK);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return userService.getUserById(userId)
+            .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/one/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable("email") String userEmail) {
-        User user = userService.findByEmail(userEmail);
-        if (user != null) return new ResponseEntity<>(user, HttpStatus.OK);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email) {
+        return userService.getUserByEmail(email)
+            .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/create")
@@ -73,7 +73,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        LoginResponse loginResponse = userService.findByMailAndPassword(loginRequest);
+        LoginResponse loginResponse = userService.login(loginRequest);
         if(loginResponse != null) {
             return ResponseEntity.ok(loginResponse);
         } else {

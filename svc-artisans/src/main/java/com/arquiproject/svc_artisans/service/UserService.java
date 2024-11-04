@@ -1,7 +1,6 @@
 package com.arquiproject.svc_artisans.service;
 
 import com.arquiproject.svc_artisans.client.CatalogClientRest;
-import com.arquiproject.svc_artisans.config.AppConfig;
 import com.arquiproject.svc_artisans.model.Order;
 import com.arquiproject.svc_artisans.model.User;
 import com.arquiproject.svc_artisans.model.Review;
@@ -18,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -31,13 +31,10 @@ public class UserService implements IUserService {
         this.clientRest = clientRest;
     }
 
-    @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
+    public Optional<User> getUserById(Long id) { return userRepository.findById(id); }
 
     @Override
-    public User findByEmail(String email){ return userRepository.findByEmail(email);}
+    public Optional<User> getUserByEmail(String email) { return userRepository.findByEmail(email);}
 
     @Override
     public User createUser(User user) {
@@ -64,11 +61,15 @@ public class UserService implements IUserService {
         return deleted;
     }
 
-    @Override
-    public LoginResponse findByMailAndPassword(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
         if(user != null){
-            return new LoginResponse(user.getEmail(), user.getPassword());
+            return new LoginResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getUserType()
+            );
         } else {
             return null;
         }
