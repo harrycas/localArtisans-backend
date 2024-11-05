@@ -25,6 +25,7 @@ public class PaymentService {
   }
 
   public PaymentIntent createPaymentIntent(PaymentInfoRequest paymentInfoRequest) throws StripeException {
+    System.out.println("Creating PaymentIntent with amount: " + paymentInfoRequest.getAmount() + " and currency: " + paymentInfoRequest.getCurrency());
     List<String> paymentMethodTypes = new ArrayList<>();
     paymentMethodTypes.add("card");
 
@@ -33,7 +34,18 @@ public class PaymentService {
     params.put("currency", paymentInfoRequest.getCurrency());
     params.put("payment_method_types", paymentMethodTypes);
 
-    return PaymentIntent.create(params);
+    // Create PaymentIntent
+    PaymentIntent paymentIntent = PaymentIntent.create(params);
+
+    // Verify PaymentIntent Status
+    if (paymentIntent.getStatus().equals("requires_payment_method")) {
+      System.out.println("PaymentIntent created successfully with status: " + paymentIntent.getStatus());
+    } else {
+      System.out.println("Unexpected status for PaymentIntent: " + paymentIntent.getStatus());
+    }
+
+    return paymentIntent;
+
   }
 
   /*public ResponseEntity<String> stripePayment(String userEmail) throws Exception {

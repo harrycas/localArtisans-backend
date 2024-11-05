@@ -19,5 +19,5 @@ public interface CatalogClientRest {
 @FeignClient(name = "msvc-catalog", url = "${msvc.catalog.url}")*/
 
 /*
-When connected directly with the application name in app properties
+When connected directly with the application name in app properties (aws, docker)
 @FeignClient(name = "msvc-catalog")*/

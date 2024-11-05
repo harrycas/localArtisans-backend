@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/v1/images")
-@CrossOrigin("*")
 public class ImgController {
 
   private static final String UPLOAD_DIR = "msvc-catalog/uploads/";

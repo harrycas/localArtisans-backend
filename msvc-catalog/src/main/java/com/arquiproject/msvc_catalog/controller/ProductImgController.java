@@ -18,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/productImg")
-@CrossOrigin("*")
 public class ProductImgController {
   private static final String UPLOAD_DIR = "msvc-catalog/uploads/";
   private final ProductImgService productImgService;

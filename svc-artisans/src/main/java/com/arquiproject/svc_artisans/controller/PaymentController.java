@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/v1/payment")
-@CrossOrigin("*")
 public class PaymentController {
   private final PaymentService paymentService;
 

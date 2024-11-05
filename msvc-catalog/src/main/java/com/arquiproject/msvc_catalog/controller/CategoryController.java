@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/category")
-@CrossOrigin("*")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -23,6 +22,7 @@ public class CategoryController {
     @GetMapping("/findAll")
     public ResponseEntity<List<Category>> findAll() {
         List<Category> categories = categoryService.findAll();
+        System.out.println("Returning categories: " + categories); // Log for verification
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
