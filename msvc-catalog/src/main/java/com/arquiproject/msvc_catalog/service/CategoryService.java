@@ -3,6 +3,7 @@ package com.arquiproject.msvc_catalog.service;
 import com.arquiproject.msvc_catalog.model.Category;
 import com.arquiproject.msvc_catalog.model.Product;
 import com.arquiproject.msvc_catalog.repository.CategoryRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,11 @@ public class CategoryService implements ICategoryService{
 
     @Override
     public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+        try {
+            return categoryRepository.save(category);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("El nombre de la categoría ya existe", e);
+        }
     }
 
     @Override

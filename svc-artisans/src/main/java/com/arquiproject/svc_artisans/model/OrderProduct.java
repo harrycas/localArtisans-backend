@@ -18,7 +18,7 @@ public class OrderProduct {
     private Long id;
 
     // Catalog Microservice
-    @Column(name = "product_id", unique = true)
+    @Column(name = "product_id")
     private Long productId;
 
     private int quantity;
