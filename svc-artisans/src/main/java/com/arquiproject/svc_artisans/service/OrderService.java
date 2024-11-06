@@ -3,6 +3,7 @@ package com.arquiproject.svc_artisans.service;
 import com.arquiproject.svc_artisans.client.CatalogClientRest;
 import com.arquiproject.svc_artisans.model.DTOs.ProductInfo;
 import com.arquiproject.svc_artisans.model.Order;
+import com.arquiproject.svc_artisans.model.enums.OrderStatus;
 import com.arquiproject.svc_artisans.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class OrderService implements IOrderService{
         return orderRepository.findById(orderId).orElse(null);
     }
 
-    public Order checkout(Long userId) {
+    public Order checkout(Long userId, double totalAmount, String deliveryAddress, String deliveryCity, String deliveryPostalCode) {
 
         // Retrieve the Shopping Cart
         Order cart = orderRepository.findByUserIdAndIsCart(userId, true)
@@ -41,23 +42,35 @@ public class OrderService implements IOrderService{
             throw new IllegalArgumentException("Cart is empty");
         }
 
-        // Calculate total
-        double subtotal = cart.getOrderProducts().stream()
-            .mapToDouble(op -> op.getQuantity() * getProductPrice(op.getProductId()))
-            .sum();
+        // Amount from the Cart
+        cart.setTotal(totalAmount);
 
-        double discount = cart.getDiscount();
-        double total = subtotal;
-        if (discount > 0) {
-            total = subtotal - (subtotal * (discount / 100));
-        }
-
-        cart.setTotal(total);
-        cart.setCart(false);  // Change state to Final Order
+        // Set Delivery Info
+        cart.setDeliveryAddress(deliveryAddress);
+        cart.setDeliveryCity(deliveryCity);
+        cart.setDeliveryPostalCode(deliveryPostalCode);
         cart.setOrderDate(LocalDateTime.now());
+        cart.setCart(false);  // Set order as final
+        cart.setStatus(OrderStatus.PREPARING);
 
         return orderRepository.save(cart);
     }
+
+    // 2nd SPRINT
+    /*public Order updateOrderStatusToOnTheWay(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        // Cambiar el estado y establecer la fecha de recogida
+        order.setStatus(OrderStatus.ON_THE_WAY);
+        order.setShipDate(LocalDateTime.now());
+
+        // Estimar la fecha de entrega, por ejemplo, 2 días después de la recogida
+        order.setDeliveryDate(order.getShipDate().plus(2, ChronoUnit.DAYS));
+
+        return orderRepository.save(order);
+    }*/
+
 
     private double getProductPrice(Long productId) {
         // Call to Microservice Catalog

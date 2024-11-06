@@ -1,5 +1,6 @@
 package com.arquiproject.svc_artisans.controller;
 
+import com.arquiproject.svc_artisans.model.DTOs.CheckoutRequest;
 import com.arquiproject.svc_artisans.model.DTOs.ProductInfo;
 import com.arquiproject.svc_artisans.service.CartService;
 import com.arquiproject.svc_artisans.service.OrderService;
@@ -52,13 +53,16 @@ public class CartController {
   }
 
   @PostMapping("/checkout")
-  public ResponseEntity<Order> checkout(@RequestParam Long userId) {
-    try {
-      Order order = orderService.checkout(userId);
-      return ResponseEntity.ok(order);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    }
+  public ResponseEntity<Order> checkout(@RequestBody CheckoutRequest request) {
+    Long userId = request.getUserId();
+    double totalAmount = request.getTotalAmount();
+    String deliveryAddress = request.getDeliveryAddress();
+    String deliveryCity = request.getDeliveryCity();
+    String deliveryPostalCode = request.getDeliveryPostalCode();
+
+    Order order = orderService.checkout(userId, totalAmount, deliveryAddress,deliveryCity,deliveryPostalCode);
+    return new ResponseEntity<>(order, HttpStatus.OK);
+
   }
 
   @GetMapping("/info/{productId}")

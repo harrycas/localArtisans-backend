@@ -24,8 +24,11 @@ public class Order {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
+    // To be implemented in the 2nd Sprint
+    //private LocalDateTime shipDate;       // When the delivery pick up the product from the artesan
+
     @Column(name = "delivery_date")
-    private LocalDateTime deliveryDate;
+    private LocalDateTime deliveryDate;  // When the product would arrive
 
     @Column(name = "delivery_address")
     private String deliveryAddress;
