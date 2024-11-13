@@ -4,6 +4,7 @@ import com.arquiproject.svc_artisans.client.CatalogClientRest;
 import com.arquiproject.svc_artisans.model.Order;
 import com.arquiproject.svc_artisans.model.User;
 import com.arquiproject.svc_artisans.model.Review;
+import com.arquiproject.svc_artisans.repository.OrderRepository;
 import com.arquiproject.svc_artisans.views.LoginRequest;
 import com.arquiproject.svc_artisans.views.LoginResponse;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,12 @@ public class UserService implements IUserService {
     final private UserRepository userRepository;
     private final CatalogClientRest clientRest;
     private static final String UPLOAD_DIR = "svc-artisans/uploads/";
+    private final OrderRepository orderRepository;
 
-    public UserService(UserRepository userRepository, CatalogClientRest clientRest) {
+    public UserService(UserRepository userRepository, CatalogClientRest clientRest, OrderRepository orderRepository) {
         this.userRepository = userRepository;
         this.clientRest = clientRest;
+        this.orderRepository = orderRepository;
     }
 
     public Optional<User> getUserById(Long id) { return userRepository.findById(id); }

@@ -27,7 +27,13 @@ public class ProductImgController {
   }
 
   @PostMapping("/upload")
-  public ResponseEntity<String> uploadImg(@RequestParam("productID") Long productID, @RequestParam("file") MultipartFile file) {
+  public ResponseEntity<String> uploadImg(@RequestParam("productID") Long productID, @RequestParam("file") MultipartFile file, @RequestParam("isPrimary") boolean isPrimary) {
+
+    // Verificación de que el productId, archivo y isPrimary se reciban correctamente
+    if (productID == null || file.isEmpty()) {
+      return new ResponseEntity<>("Faltan parámetros", HttpStatus.BAD_REQUEST);
+    }
+
     try {
       productImgService.addImageToProduct(productID,file);
       return new ResponseEntity<>("Image uploaded successfully", HttpStatus.OK);

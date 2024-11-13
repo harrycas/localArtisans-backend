@@ -43,8 +43,11 @@ public class ProductService implements IProductService{
         return deleted;
     }
 
+//    @Override
+//    public List<Product> findAllProduct() {return productRepository.findAll();}
+
     @Override
-    public List<Product> findAllProduct() {return productRepository.findAll();}
+    public List<Product> findAllWithImages() {return productRepository.findAll();}
 
     @Override
     public List<Product> findAllProductsByUserId(Long userId){

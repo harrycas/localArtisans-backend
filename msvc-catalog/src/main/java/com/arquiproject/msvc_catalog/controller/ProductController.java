@@ -73,9 +73,15 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+//    @GetMapping("/findAllProducts")
+//    public ResponseEntity<List<Product>> findAllProducts() {
+//        List<Product> product = productService.findAllProduct();
+//        return new ResponseEntity<>(product, HttpStatus.OK);
+//    }
+
     @GetMapping("/findAllProducts")
     public ResponseEntity<List<Product>> findAllProducts() {
-        List<Product> product = productService.findAllProduct();
+        List<Product> product = productService.findAllWithImages();
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 

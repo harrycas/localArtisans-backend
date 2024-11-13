@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
@@ -56,10 +57,13 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "delivery_id")
+    private User deliveryPerson; // Repartidor asignado a la orden
+
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 
     @Enumerated(EnumType.STRING)  // Save the Enum as a String in the Database
     private OrderStatus status = OrderStatus.REQUEST_RECEIVED;  // Initial state
-
 }

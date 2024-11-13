@@ -13,6 +13,9 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query(value = "select p from Product p where p.userId=:userId")
     List<Product> findByUserId(Long userId);
 
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.images")
+    List<Product> findAllWithImages();
+
     @Modifying
     @Query("UPDATE Product p SET p.active = false WHERE p.userId = :userId")
     int markProductsAsInactiveByUserId(Long userId);

@@ -3,22 +3,29 @@ package com.arquiproject.svc_artisans.service;
 import com.arquiproject.svc_artisans.client.CatalogClientRest;
 import com.arquiproject.svc_artisans.model.DTOs.ProductInfo;
 import com.arquiproject.svc_artisans.model.Order;
+import com.arquiproject.svc_artisans.model.User;
 import com.arquiproject.svc_artisans.model.enums.OrderStatus;
+import com.arquiproject.svc_artisans.model.enums.UserType;
 import com.arquiproject.svc_artisans.repository.OrderRepository;
+import com.arquiproject.svc_artisans.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class OrderService implements IOrderService{
 
     final private OrderRepository orderRepository;
     final private CatalogClientRest clientRest;
+    final private UserRepository userRepository;
 
-    public OrderService(OrderRepository orderRepository, CatalogClientRest clientRest) {
+    public OrderService(OrderRepository orderRepository, CatalogClientRest clientRest, UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.clientRest = clientRest;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -29,6 +36,16 @@ public class OrderService implements IOrderService{
     @Override
     public Order findById(Long orderId) {
         return orderRepository.findById(orderId).orElse(null);
+    }
+
+    private User getAvailableDeliveryPerson() {
+        // Obtener todos los usuarios con rol DELIVERY
+        List<User> deliveryUsers = userRepository.findAllByUserType(UserType.DELIVERY);
+
+        // Buscar al repartidor con menos órdenes asignadas
+        return deliveryUsers.stream()
+                .min(Comparator.comparingInt(delivery -> orderRepository.countByDeliveryPersonAndStatusNot(delivery, OrderStatus.DELIVERED)))
+                .orElseThrow(() -> new IllegalStateException("No delivery users available"));
     }
 
     public Order checkout(Long userId, double totalAmount, String deliveryAddress, String deliveryCity, String deliveryPostalCode) {
@@ -52,6 +69,10 @@ public class OrderService implements IOrderService{
         cart.setOrderDate(LocalDateTime.now());
         cart.setCart(false);  // Set order as final
         cart.setStatus(OrderStatus.PREPARING);
+
+        // Asignar el repartidor con menos pedidos
+        User availableDeliveryPerson = getAvailableDeliveryPerson();
+        cart.setDeliveryPerson(availableDeliveryPerson);
 
         return orderRepository.save(cart);
     }
@@ -80,8 +101,16 @@ public class OrderService implements IOrderService{
         if (productInfo == null || !productInfo.isActive()) {
             throw new IllegalArgumentException("Product not found or inactive");
         }
-
         return productInfo.getPrice();
     }
+
+    public List<Order> getOrdersByDeliveryPerson(Long deliveryPersonId) {
+        return orderRepository.findByDeliveryPersonId(deliveryPersonId);
+    }
+
+    public Order findOrderByDeliveryPersonAndId(Long deliveryPersonId, Long orderId) {
+        return orderRepository.findByDeliveryPersonIdAndOrderId(deliveryPersonId, orderId);
+    }
+
 
 }

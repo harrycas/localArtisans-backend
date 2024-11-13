@@ -36,7 +36,24 @@ public class OrderController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
 
+    @GetMapping("/assigned/{deliveryPersonId}/{orderId}")
+    public ResponseEntity<Order> findOrderByDeliveryPersonIdAndOrderId(
+            @PathVariable Long deliveryPersonId,
+            @PathVariable Long orderId) {
+        Order order = orderService.findOrderByDeliveryPersonAndId(deliveryPersonId, orderId);
+        if (order != null) {
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/assigned/{deliveryPersonId}")
+    public ResponseEntity<List<Order>> getAssignedOrders(@PathVariable Long deliveryPersonId) {
+        List<Order> assignedOrders = orderService.getOrdersByDeliveryPerson(deliveryPersonId);
+        return new ResponseEntity<>(assignedOrders, HttpStatus.OK);
     }
 
 }

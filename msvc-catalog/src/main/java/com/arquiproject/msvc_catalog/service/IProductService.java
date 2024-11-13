@@ -10,8 +10,10 @@ public interface IProductService {
     Product createProduct(Product product);
     Product updateProduct(Product product);
     boolean deleteProduct(Long id);
-    List<Product> findAllProduct();
+//    List<Product> findAllProduct();
     List<Product> findAllProductsByUserId(Long userId);
     void updateProductsToInactive(Long userId);
+
+    List<Product> findAllWithImages();
 
 }
