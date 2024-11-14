@@ -6,6 +6,9 @@ import com.arquiproject.msvc_catalog.model.DTOs.ProductInfo;
 import com.arquiproject.msvc_catalog.model.Product;
 import com.arquiproject.msvc_catalog.service.CategoryService;
 import com.arquiproject.msvc_catalog.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +29,17 @@ public class ProductController {
         this.categoryService = categoryService;
     }
 
+    @Operation(
+        summary = "Obtener entidad Producto por su id",
+        description = "Devuelve los detalles de un producto específico mediante su ID",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Producto encontrado"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+        })
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable("id") Long productId) {
+    public ResponseEntity<Product> getProductById(
+        @Parameter(description = "ID del producto que se desea obtener")
+        @PathVariable("id") Long productId) {
         return productService.getProductById(productId)
             .map(product -> new ResponseEntity<>(product, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

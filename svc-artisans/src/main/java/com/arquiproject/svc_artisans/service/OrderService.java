@@ -2,13 +2,16 @@ package com.arquiproject.svc_artisans.service;
 
 import com.arquiproject.svc_artisans.client.CatalogClientRest;
 import com.arquiproject.svc_artisans.model.DTOs.ProductInfo;
+import com.arquiproject.svc_artisans.model.DTOs.SaleInfo;
 import com.arquiproject.svc_artisans.model.Order;
+import com.arquiproject.svc_artisans.model.OrderProduct;
 import com.arquiproject.svc_artisans.model.enums.OrderStatus;
 import com.arquiproject.svc_artisans.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class OrderService implements IOrderService{
@@ -71,17 +74,35 @@ public class OrderService implements IOrderService{
         return orderRepository.save(order);
     }*/
 
+    public List<SaleInfo> getSalesByArtisan(Long artisanId) {
+        List<Order> completedOrders = orderRepository.findByIsCartFalse();
+        List<SaleInfo> sales = new ArrayList<>();
 
-    private double getProductPrice(Long productId) {
-        // Call to Microservice Catalog
-        ProductInfo productInfo = clientRest.getProductById(productId);
+        for (Order order : completedOrders) {
+            for (OrderProduct orderProduct : order.getOrderProducts()) {
+                try {
+                    ProductInfo productInfo = clientRest.getProductById(orderProduct.getProductId());
 
-        // Verify product exists or is Active
-        if (productInfo == null || !productInfo.isActive()) {
-            throw new IllegalArgumentException("Product not found or inactive");
+                    if (productInfo != null && productInfo.getUserId().equals(artisanId)) {
+                        SaleInfo sale = new SaleInfo();
+                        sale.setOrderId(order.getId());
+                        sale.setProductName(productInfo.getName());
+                        sale.setProductPrice(productInfo.getPrice());
+                        sale.setQuantity(orderProduct.getQuantity());
+                        sale.setOrderDate(order.getOrderDate());
+                        sale.setCategoryId(productInfo.getCategoryId());
+                        sale.setStatus(order.getStatus());
+
+                        sales.add(sale);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Can not get info of product " + orderProduct.getProductId() + ": " + e.getMessage());
+                    // Register error in a log or ignore it
+                }
+            }
         }
 
-        return productInfo.getPrice();
+        return sales;
     }
 
 }

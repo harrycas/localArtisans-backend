@@ -13,7 +13,7 @@ public class CorsConfig {
   public CorsFilter corsFilter() {
     CorsConfiguration config = new CorsConfiguration();
     // Ngrok url api requests
-    config.addAllowedOrigin("https://f8dc-179-6-166-86.ngrok-free.app");
+    config.addAllowedOrigin("https://053e-179-6-166-86.ngrok-free.app");
     config.addAllowedOrigin("http://localhost:4200"); // Angular localhost dev
     config.setAllowCredentials(true);
     config.addAllowedHeader("*");

@@ -4,6 +4,8 @@ import com.arquiproject.svc_artisans.model.Order;
 import com.arquiproject.svc_artisans.model.Review;
 import com.arquiproject.svc_artisans.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
@@ -18,5 +20,12 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<Order> findAllUserOrders(Long userId);
     @Query(value = "select r from Review r where r.user.id = :userId")
     List<Review> findAllUserReviews(Long userId);
+
+    @Modifying
+    @Query("UPDATE User u SET u.stripeAccountId = :accountId WHERE u.id = :vendorId")
+    void updateStripeAccountId(@Param("vendorId") Long vendorId, @Param("accountId") String accountId);
+
+    @Query("SELECT u.stripeAccountId FROM User u WHERE u.id = :vendorId")
+    Optional<String> findStripeAccountIdById(@Param("vendorId") Long vendorId);
 
 }
